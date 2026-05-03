@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kozamurnik Center mobilnosti — Spletna stran
 
-## Getting Started
+Uradna spletna stran za **KOZAMURNIK Center mobilnosti d.o.o.** — pnevmatike, vulkanizerstvo in avtovleka v Šentjanžu.
 
-First, run the development server:
+## Tehnološki sklad
+
+- **Framework:** Next.js (App Router), TypeScript
+- **Stiliranje:** Tailwind CSS v4
+- **Animacije:** Framer Motion
+- **Ikone:** lucide-react
+- **Obrazci:** react-hook-form + Zod
+- **Email:** Resend
+- **Gostovanje:** Vercel
+
+## Namestitev in zagon
+
+### Predpogoji
+
+- Node.js 20+
+- npm 10+
+
+### Lokalni razvoj
 
 ```bash
+# Klonirajte repozitorij
+git clone <repo-url>
+cd kozamurnik
+
+# Namestite odvisnosti
+npm install
+
+# Ustvarite .env.local iz predloge
+cp .env.local.example .env.local
+# Uredite .env.local z vašimi vrednostmi
+
+# Zaženite razvojni strežnik
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Spletna stran je dostopna na [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Gradnja za produkcijo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Okoljske spremenljivke
 
-To learn more about Next.js, take a look at the following resources:
+Ustvarite datoteko `.env.local` na osnovi `.env.local.example`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Spremenljivka | Opis | Obvezno |
+|---|---|---|
+| `RESEND_API_KEY` | API ključ za Resend (pošiljanje emailov) | Za email |
+| `CONTACT_EMAIL_TO` | E-naslov prejemnika kontaktnega obrazca | Da |
+| `CONTACT_EMAIL_FROM` | E-naslov pošiljatelja (Resend domena) | Za email |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> **Opomba:** Brez `RESEND_API_KEY` kontaktni obrazec deluje v debug načinu — izpis v konzolo, brez dejanskega emaila.
 
-## Deploy on Vercel
+## Struktura projekta
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+kozamurnik/
+├── app/                    # Next.js App Router strani
+│   ├── page.tsx            # Domača stran
+│   ├── o-nas/              # O nas
+│   ├── storitve/           # Storitve (hub + podstrani)
+│   ├── pnevmatike/         # Pnevmatike (hub + podstrani)
+│   ├── avtovleka/          # Avtovleka
+│   ├── kontakt/            # Kontakt
+│   └── api/contact/        # API za kontaktni obrazec
+├── components/             # React komponente
+│   ├── ui/                 # UI primitivi (Button, Card, itd.)
+│   ├── layout/             # Navigacija, Footer, Banner
+│   ├── hero/               # Hero sekcije
+│   ├── sections/           # Vsebinske sekcije
+│   └── forms/              # Obrazci
+├── data/                   # Vsebinski podatki (en. izvor resnice)
+├── lib/                    # Pomožne funkcije
+└── public/images/          # Slike (zamenjajte z dejanskimi)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Vsebina in podatki
+
+Vsa vsebina je v datotekah v mapi `data/`:
+
+- `data/services.ts` — storitve
+- `data/tires.ts` — kategorije pnevmatik
+- `data/reviews.ts` — ocene strank (zamenjajte z resničnimi)
+- `data/faq.ts` — pogosta vprašanja
+- `data/brands.ts` — blagovne znamke
+- `data/partners.ts` — zavarovalnice
+
+Sezonski banner se nastavi v `lib/config.ts` → `seasonalBanner`.
+
+## Slike
+
+Glejte `/public/images/IMAGES.md` za seznam vseh slik, ki jih je treba zamenjati z dejanskimi fotografijami.
+
+## Razvoj
+
+```bash
+npm run dev      # Razvojni strežnik
+npm run build    # Gradnja
+npm run start    # Produkcijski strežnik
+npm run lint     # Preverjanje kode
+```
+
+## Objava na Vercel
+
+1. Uvozite repozitorij v Vercel
+2. Nastavite okoljske spremenljivke v Vercel nadzorni plošči
+3. Povežite domeno `kozamurnik.si`
+4. Vsaka objava na `main` vejo se samodejno objavi
+
+## Kontakt
+
+Za tehnično podporo: [Jedro Systems](https://jedroplus.com)
