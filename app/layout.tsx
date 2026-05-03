@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { SeasonalBanner } from "@/components/layout/SeasonalBanner";
+import { ChatbotScript } from "@/components/layout/ChatbotScript";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -120,16 +120,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
-        <Script
-          src="https://chatbot.jedroplus.com/chatbot-plus.js"
-          strategy="afterInteractive"
-          onLoad={() => {
-            (window as any).ChatbotPlus?.init({
-              companySlug: 'jedroplus-d-o-o',
-              webhookUrl: 'https://chatbot.jedroplus.com/api/chat',
-            });
-          }}
-        />
+        <ChatbotScript />
       </body>
     </html>
   );
