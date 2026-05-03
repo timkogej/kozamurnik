@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
@@ -120,13 +119,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
-        <Script
-          id="jedroplus-chatbot"
-          src="https://chatbot.jedroplus.com/chatbot-plus.js?slug=jedroplus-d-o-o"
-          data-chatbot-plus-auto-init=""
-          data-webhook-url="https://chatbot.jedroplus.com/api/chat"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
