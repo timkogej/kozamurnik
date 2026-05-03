@@ -121,10 +121,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <Script
-          src="https://chatbot.jedroplus.com/chatbot-plus.js?slug=jedroplus-d-o-o"
-          data-chatbot-plus-auto-init
-          data-webhook-url="https://chatbot.jedroplus.com/api/chat"
+          src="https://chatbot.jedroplus.com/chatbot-plus.js"
           strategy="afterInteractive"
+          onLoad={() => {
+            (window as any).ChatbotPlus?.init({
+              companySlug: 'jedroplus-d-o-o',
+              webhookUrl: 'https://chatbot.jedroplus.com/api/chat',
+            });
+          }}
         />
       </body>
     </html>
