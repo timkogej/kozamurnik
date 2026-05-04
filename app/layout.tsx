@@ -4,7 +4,6 @@ import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { SeasonalBanner } from "@/components/layout/SeasonalBanner";
-import { ChatbotScript } from "@/components/layout/ChatbotScript";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -120,7 +119,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
-        <ChatbotScript />
       </body>
     </html>
   );
