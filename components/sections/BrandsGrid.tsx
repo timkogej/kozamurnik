@@ -5,15 +5,17 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { brands } from "@/data/brands";
 import { staggerContainer, fadeInUp, VIEWPORT_ONCE } from "@/lib/motion";
+import { cn } from "@/lib/cn";
 
 type BrandsGridProps = {
-  variant?: "light" | "dark";
+  background?: "white" | "muted";
 };
 
-export function BrandsGrid({ variant = "light" }: BrandsGridProps) {
-  const isDark = variant === "dark";
+export function BrandsGrid({ background = "white" }: BrandsGridProps) {
   return (
-    <section className={isDark ? "bg-ink-900 py-20 md:py-28" : "bg-fog-100 py-20 md:py-28"}>
+    <section
+      className={cn("py-24 md:py-28", background === "muted" ? "bg-paper-100" : "bg-paper")}
+    >
       <Container>
         <motion.div
           variants={staggerContainer}
@@ -24,14 +26,10 @@ export function BrandsGrid({ variant = "light" }: BrandsGridProps) {
         >
           <motion.div variants={fadeInUp} className="text-center">
             <Eyebrow className="mb-3">Uradni prodajalec</Eyebrow>
-            <h2
-              className={`font-display font-bold text-4xl md:text-5xl tracking-tight mb-4 ${isDark ? "text-fog-50" : "text-ink-900"}`}
-            >
+            <h2 className="font-display font-semibold text-4xl md:text-5xl tracking-[-0.025em] leading-[1.08] text-graphite-900 mb-4">
               Zaupamo le najboljšim znamkam
             </h2>
-            <p className={`text-sm ${isDark ? "text-fog-400" : "text-fog-500"}`}>
-              Uradni partner za pnevmatike Yokohama.
-            </p>
+            <p className="text-sm text-graphite-500">Uradni partner za pnevmatike Yokohama.</p>
           </motion.div>
 
           <motion.div
@@ -42,14 +40,12 @@ export function BrandsGrid({ variant = "light" }: BrandsGridProps) {
               <motion.div
                 key={brand.slug}
                 variants={fadeInUp}
-                className={`group flex items-center justify-center h-16 rounded-xl transition-all duration-300 px-3 hover:border-brand-500/40 ${isDark ? "bg-ink-800 border border-ink-700" : "bg-white border border-fog-200 shadow-card"}`}
+                className="group flex items-center justify-center h-16 rounded-xl px-3 bg-white border border-paper-300 shadow-soft transition-all duration-300 hover:shadow-card hover:-translate-y-0.5"
               >
-                <span
-                  className={`font-display font-bold text-sm transition-colors text-center ${isDark ? "text-fog-200 group-hover:text-fog-50" : "text-ink-700 group-hover:text-ink-900"}`}
-                >
+                <span className="font-display font-medium text-sm text-graphite-500 group-hover:text-graphite-900 transition-colors text-center">
                   {brand.name}
                   {brand.isOfficialPartner && (
-                    <span className="block text-[8px] text-brand-500 mt-0.5">
+                    <span className="block text-[8px] font-semibold uppercase tracking-wider text-brand-500 mt-0.5">
                       Partner
                     </span>
                   )}

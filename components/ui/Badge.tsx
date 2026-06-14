@@ -7,10 +7,10 @@ type BadgeProps = {
 };
 
 const variantClasses = {
-  default: "bg-ink-700 text-fog-300 border-ink-600",
+  default: "bg-paper-100 text-graphite-500 border-paper-300",
   success: "bg-success/10 text-success border-success/20",
   warning: "bg-warning/10 text-warning border-warning/20",
-  brand: "bg-brand-500/10 text-brand-400 border-brand-500/20",
+  brand: "bg-brand-50 text-brand-600 border-brand-100",
 };
 
 export function Badge({ children, variant = "default", className }: BadgeProps) {

@@ -20,6 +20,9 @@ export default function TirePage() {
         subhead={tire.shortDesc}
         breadcrumbs={[{ label: "Pnevmatike", href: "/pnevmatike" }, { label: tire.title }]}
         showBookingCta={false}
+        backgroundImage="/images/tires/kozamurnik-pnevmatike-hero.png"
+        imageAlt="Avtomobilska pnevmatika na platišču — Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
       <TirePageContent tire={tire} />
     </>

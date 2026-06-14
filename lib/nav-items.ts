@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Bike,
   Layers,
+  Bus,
 } from "lucide-react";
 
 export const servicesItems = [
@@ -18,6 +19,7 @@ export const servicesItems = [
   { label: "Centriranje koles", href: "/storitve/centriranje-koles", icon: Target, desc: "3D geometrija za varno vožnjo" },
   { label: "Mini servis", href: "/storitve/mini-servis", icon: Settings, desc: "Olje, filtri, pregled vozila" },
   { label: "Shranjevanje pnevmatik", href: "/storitve/shranjevanje-pnevmatik", icon: Warehouse, desc: "Sezonski hotel za pnevmatike" },
+  { label: "Najem kombijev", href: "/storitve/najem-kombijev", icon: Bus, desc: "Trije kombiji za selitve in prevoze" },
 ];
 
 export const tiresItems = [

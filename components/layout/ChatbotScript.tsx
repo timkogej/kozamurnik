@@ -8,7 +8,10 @@ export function ChatbotScript() {
       src="https://chatbot.jedroplus.com/chatbot-plus.js"
       strategy="afterInteractive"
       onLoad={() => {
-        (window as any).ChatbotPlus?.init({
+        const w = window as unknown as {
+          ChatbotPlus?: { init: (options: Record<string, string>) => void };
+        };
+        w.ChatbotPlus?.init({
           companySlug: "jedroplus-d-o-o",
           webhookUrl: "https://chatbot.jedroplus.com/api/chat",
         });

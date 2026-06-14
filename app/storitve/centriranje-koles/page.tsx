@@ -18,6 +18,9 @@ export default function CentriranjeKolesPage() {
         headline="Centriranje koles"
         subhead="Natančno 3D centriranje geometrije koles — za varnost in dolgo življenjsko dobo pnevmatik."
         breadcrumbs={[{ label: "Storitve", href: "/storitve" }, { label: "Centriranje koles" }]}
+        backgroundImage="/images/services/kozamurnik-storitve-hero-2.png"
+        imageAlt="Komplet pnevmatik s križnim ključem — storitve Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
       <ServicePageContent service={service} />
     </>

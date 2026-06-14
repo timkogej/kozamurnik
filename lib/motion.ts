@@ -46,4 +46,4 @@ export const tapScale = {
   scale: 0.98,
 };
 
-export const VIEWPORT_ONCE = { once: true, margin: "-10%" };
+export const VIEWPORT_ONCE = { once: true, margin: "-12%" };

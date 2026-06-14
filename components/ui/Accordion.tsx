@@ -14,27 +14,22 @@ type AccordionItem = {
 type AccordionProps = {
   items: AccordionItem[];
   className?: string;
-  variant?: "dark" | "light";
 };
 
-function AccordionRow({ item, isOpen, onToggle, variant = "dark" }: {
+function AccordionRow({
+  item,
+  isOpen,
+  onToggle,
+}: {
   item: AccordionItem;
   isOpen: boolean;
   onToggle: () => void;
-  variant?: "dark" | "light";
 }) {
-  const isLight = variant === "light";
   return (
     <div
       className={cn(
-        "border rounded-xl overflow-hidden transition-colors duration-200",
-        isLight
-          ? isOpen
-            ? "border-brand-500/40 bg-white"
-            : "border-fog-200 bg-white hover:border-brand-500/20"
-          : isOpen
-            ? "border-brand-500/40 bg-ink-800"
-            : "border-ink-700 bg-ink-800 hover:border-brand-500/20"
+        "border rounded-xl overflow-hidden bg-white transition-all duration-200",
+        isOpen ? "border-brand-500/40 shadow-soft" : "border-paper-300 hover:border-graphite-300"
       )}
     >
       <button
@@ -43,18 +38,20 @@ function AccordionRow({ item, isOpen, onToggle, variant = "dark" }: {
         className="w-full flex items-center justify-between gap-4 p-5 md:p-6 text-left"
         aria-expanded={isOpen}
       >
-        <span className={cn(
-          "font-display font-semibold text-base md:text-lg leading-snug",
-          isLight
-            ? isOpen ? "text-ink-900" : "text-ink-700"
-            : isOpen ? "text-fog-50" : "text-fog-200"
-        )}>
+        <span
+          className={cn(
+            "font-display font-medium text-base md:text-lg leading-snug",
+            isOpen ? "text-graphite-900" : "text-graphite-700"
+          )}
+        >
           {item.question}
         </span>
-        <span className={cn(
-          "shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200",
-          isOpen ? "bg-brand-500 text-white" : isLight ? "bg-fog-200 text-fog-500" : "bg-ink-700 text-fog-400"
-        )}>
+        <span
+          className={cn(
+            "shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-200",
+            isOpen ? "bg-brand-500 text-white" : "bg-paper-200 text-graphite-500"
+          )}
+        >
           {isOpen ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         </span>
       </button>
@@ -68,10 +65,7 @@ function AccordionRow({ item, isOpen, onToggle, variant = "dark" }: {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className={cn(
-              "font-sans px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base leading-relaxed",
-              isLight ? "text-fog-500" : "text-fog-400"
-            )}>
+            <div className="font-sans px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base leading-[1.65] text-graphite-500">
               {item.answer}
             </div>
           </motion.div>
@@ -81,7 +75,7 @@ function AccordionRow({ item, isOpen, onToggle, variant = "dark" }: {
   );
 }
 
-export function Accordion({ items, className, variant = "dark" }: AccordionProps) {
+export function Accordion({ items, className }: AccordionProps) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
@@ -92,7 +86,6 @@ export function Accordion({ items, className, variant = "dark" }: AccordionProps
           item={item}
           isOpen={openId === item.id}
           onToggle={() => setOpenId(openId === item.id ? null : item.id)}
-          variant={variant}
         />
       ))}
     </div>

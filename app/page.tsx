@@ -6,9 +6,12 @@ import { StatsSection } from "@/components/sections/StatsSection";
 import { ReservationCta } from "@/components/sections/ReservationCta";
 import { ShopReminder } from "@/components/sections/ShopReminder";
 import { BrandsGrid } from "@/components/sections/BrandsGrid";
-import { ReviewsCarousel } from "@/components/sections/ReviewsCarousel";
+import { ReviewsMarquee } from "@/components/sections/ReviewsMarquee";
 import { FaqSection } from "@/components/sections/FaqSection";
+import { RollingTireDivider } from "@/components/motion/RollingTireDivider";
 import { services } from "@/data/services";
+
+const visibleServices = services.filter((service) => service.slug !== "avtovleka");
 
 export const metadata: Metadata = {
   title: "Kozamurnik — Pnevmatike, vulkanizerstvo in avtovleka | Šentjanž",
@@ -21,13 +24,15 @@ export default function HomePage() {
     <>
       <HomeHero />
       <TrustStrip />
-      <ServicesGrid services={services} showAllLink />
-      <StatsSection variant="light" />
+      <ServicesGrid services={visibleServices} showAllLink />
+      <StatsSection />
+      <RollingTireDivider />
       <ReservationCta />
-      <ShopReminder variant="dark" />
+      <ShopReminder />
+      <RollingTireDivider />
       <BrandsGrid />
-      <ReviewsCarousel />
-      <FaqSection limit={6} variant="dark" />
+      <ReviewsMarquee />
+      <FaqSection limit={6} />
     </>
   );
 }

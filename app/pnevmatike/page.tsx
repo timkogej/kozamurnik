@@ -6,6 +6,7 @@ import { ShopReminder } from "@/components/sections/ShopReminder";
 import { BrandsGrid } from "@/components/sections/BrandsGrid";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { ReservationCta } from "@/components/sections/ReservationCta";
+import { RollingTireDivider } from "@/components/motion/RollingTireDivider";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { siteConfig } from "@/lib/config";
@@ -38,24 +39,27 @@ export default function PnevmatikePage() {
           href: siteConfig.externalLinks.shop,
           external: true,
         }}
+        backgroundImage="/images/tires/kozamurnik-pnevmatike-hero.png"
+        imageAlt="Avtomobilska pnevmatika na platišču — Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
 
-      {/* Intro — dark */}
-      <section className="bg-ink-950 py-10 md:py-16">
+      {/* Intro */}
+      <section className="bg-paper py-10 md:py-16">
         <Container>
-          <p className="text-center font-sans text-lg leading-relaxed text-fog-400 max-w-3xl mx-auto">
+          <p className="text-center font-sans text-lg leading-[1.65] text-graphite-500 max-w-3xl mx-auto">
             V naši ponudbi in spletni trgovini najdete pnevmatike za vsa vozila, vsako sezono in
             vsak proračun. Svetujemo pri izbiri, montiramo in balansiramo pri nas.
           </p>
         </Container>
       </section>
 
-      {/* Category grid — DARK */}
-      <section className="bg-ink-950 py-20 md:py-28">
+      {/* Category grid */}
+      <section className="bg-paper py-12 md:py-20">
         <Container>
           <div className="mb-10">
             <Eyebrow className="mb-3">Kategorije</Eyebrow>
-            <h2 className="font-display font-bold text-4xl tracking-tight text-fog-50">
+            <h2 className="font-display font-semibold text-4xl tracking-[-0.025em] leading-[1.08] text-graphite-900">
               Vrsta pnevmatik
             </h2>
           </div>
@@ -64,17 +68,17 @@ export default function PnevmatikePage() {
               <Link
                 key={slug}
                 href={`/pnevmatike/${slug}`}
-                className="group flex items-start gap-4 p-6 bg-ink-800 hover:bg-ink-700 border border-ink-700 hover:border-brand-500/40 rounded-2xl transition-all"
+                className="group flex items-start gap-4 p-6 bg-white border border-paper-300 shadow-soft hover:shadow-card-lg rounded-2xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center shrink-0">
                   <Icon className="w-6 h-6 text-brand-500" aria-hidden />
                 </div>
                 <div className="flex-1">
-                  <p className="font-display font-semibold text-lg text-fog-50 mb-1">{title}</p>
-                  <p className="text-sm text-fog-400">{desc}</p>
+                  <p className="font-display font-medium text-lg text-graphite-900 mb-1">{title}</p>
+                  <p className="text-sm text-graphite-500">{desc}</p>
                 </div>
                 <ArrowRight
-                  className="w-5 h-5 text-fog-500 group-hover:text-brand-500 transition-all group-hover:translate-x-1 shrink-0 mt-1"
+                  className="w-5 h-5 text-graphite-400 group-hover:text-brand-500 transition-all group-hover:translate-x-1 shrink-0 mt-1"
                   aria-hidden
                 />
               </Link>
@@ -83,24 +87,24 @@ export default function PnevmatikePage() {
         </Container>
       </section>
 
-      {/* ShopReminder — LIGHT */}
-      <ShopReminder variant="light" />
+      <ShopReminder />
 
-      {/* BrandsGrid — DARK */}
-      <BrandsGrid variant="dark" />
+      <BrandsGrid />
 
-      {/* Tire size guide — LIGHT */}
-      <section className="bg-fog-50 border-t border-fog-200 py-20 md:py-28">
+      <RollingTireDivider />
+
+      {/* Tire size guide */}
+      <section className="bg-paper-100 border-y border-paper-300 py-24 md:py-32">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <Eyebrow className="mb-3">Vodnik</Eyebrow>
-              <h2 className="font-display font-bold text-4xl tracking-tight text-ink-900 mb-4">
+              <h2 className="font-display font-semibold text-4xl tracking-[-0.025em] leading-[1.08] text-graphite-900 mb-4">
                 Kako prebrati oznake pnevmatik?
               </h2>
-              <p className="text-fog-500 leading-relaxed mb-6">
+              <p className="text-graphite-500 leading-[1.65] mb-6">
                 Vsaka pnevmatika nosi niz oznak, ki vam povedo vse bistvene lastnosti. Na primer:{" "}
-                <strong className="text-ink-800">205/55 R16 91V</strong> pomeni:
+                <strong className="text-graphite-700">205/55 R16 91V</strong> pomeni:
               </p>
               <ul className="space-y-3">
                 {[
@@ -114,19 +118,19 @@ export default function PnevmatikePage() {
                     <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded bg-brand-500 text-white text-xs font-bold shrink-0 mt-0.5">
                       {oznaka}
                     </span>
-                    <span className="text-sm text-fog-500">{opis}</span>
+                    <span className="text-sm text-graphite-500">{opis}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-fog-100 border border-fog-200 rounded-2xl p-8">
-              <div className="aspect-square bg-white border border-fog-200 rounded-xl flex items-center justify-center shadow-sm">
+            <div className="bg-white border border-paper-300 rounded-2xl p-8 shadow-soft">
+              <div className="aspect-square bg-paper-100 border border-paper-200 rounded-xl flex items-center justify-center">
                 <div className="text-center">
-                  <p className="font-display font-bold text-5xl text-ink-900 mb-3">
+                  <p className="font-display font-bold text-5xl text-graphite-900 mb-3">
                     205/55 R16
                   </p>
                   <p className="font-display font-bold text-3xl text-brand-500">91V</p>
-                  <p className="text-xs text-fog-500 mt-4">Primer oznake pnevmatike</p>
+                  <p className="text-xs text-graphite-400 mt-4">Primer oznake pnevmatike</p>
                 </div>
               </div>
             </div>
@@ -134,7 +138,7 @@ export default function PnevmatikePage() {
         </Container>
       </section>
 
-      <FaqSection filterTags={["tires"]} limit={5} variant="dark" />
+      <FaqSection filterTags={["tires"]} limit={5} />
       <ReservationCta />
     </>
   );

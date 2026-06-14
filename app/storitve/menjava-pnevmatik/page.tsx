@@ -18,6 +18,9 @@ export default function MenjavaPnevmatikPage() {
         headline="Menjava pnevmatik"
         subhead="Hitra in natančna menjava sezonskih pnevmatik s strokovnim osebjem."
         breadcrumbs={[{ label: "Storitve", href: "/storitve" }, { label: "Menjava pnevmatik" }]}
+        backgroundImage="/images/services/kozamurnik-storitve-hero-2.png"
+        imageAlt="Komplet pnevmatik s križnim ključem — storitve Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
       <ServicePageContent service={service} />
     </>

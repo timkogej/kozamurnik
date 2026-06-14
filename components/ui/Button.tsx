@@ -11,7 +11,6 @@ type ButtonBaseProps = {
   className?: string;
   children: React.ReactNode;
   loading?: boolean;
-  pulseGlow?: boolean;
 };
 
 type ButtonAsButton = ButtonBaseProps &
@@ -27,12 +26,10 @@ type ButtonAsAnchor = ButtonBaseProps &
 type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    "bg-brand-500 hover:bg-brand-600 text-white border border-brand-500 hover:border-brand-600",
+  primary: "bg-brand-500 hover:bg-brand-600 text-white shadow-brand",
   secondary:
-    "bg-transparent hover:bg-fog-50/5 text-fog-50 border border-fog-50/20 hover:border-fog-50/40",
-  ghost:
-    "bg-transparent hover:bg-ink-700 text-fog-300 hover:text-fog-50 border border-transparent",
+    "border-2 border-graphite-900 text-graphite-900 hover:bg-paper-100 hover:text-graphite-900",
+  ghost: "text-brand-500 hover:bg-brand-50",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -72,17 +69,15 @@ export function Button({
   className,
   children,
   loading,
-  pulseGlow,
   ...props
 }: ButtonProps) {
   const classes = cn(
-    "inline-flex items-center justify-center font-display font-semibold tracking-normal transition-colors duration-200 cursor-pointer select-none",
+    "inline-flex items-center justify-center font-sans font-medium tracking-[0.01em] transition-all duration-200 cursor-pointer select-none",
     "focus-visible:outline-2 focus-visible:outline-brand-500 focus-visible:outline-offset-2",
     "disabled:opacity-50 disabled:pointer-events-none",
     "active:scale-[0.98]",
     variantClasses[variant],
     sizeClasses[size],
-    pulseGlow && "animate-pulse-glow",
     className
   );
 

@@ -27,7 +27,7 @@ export const siteConfig = {
     sunday: "Nedelja in prazniki: zaprto",
   },
   ratings: {
-    score: "9.6",
+    score: "4.7",
     count: 96,
     platform: "Google",
   },
@@ -44,9 +44,13 @@ export const siteConfig = {
     instagram: "#",
   },
   // Change this each season — no code changes needed
-  seasonalBanner: {
+  seasonalToast: {
     active: true,
-    text: "Čas je za menjavo na letne pnevmatike — rezervirajte termin pravočasno",
+    title: "Čas je za menjavo pnevmatik",
+    text: "Rezervirajte termin pravočasno — izognite se gneči.",
+    ctaLabel: "Rezerviraj termin",
+    // Seconds on page before the toast slides in
+    delaySeconds: 18,
   },
 };
 

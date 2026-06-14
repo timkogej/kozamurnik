@@ -18,6 +18,9 @@ export default function ShranjewanjePnevmatikPage() {
         headline="Shranjevanje pnevmatik"
         subhead="Varno sezonsko shranjevanje — vaše pnevmatike so pri nas v dobrih rokah."
         breadcrumbs={[{ label: "Storitve", href: "/storitve" }, { label: "Shranjevanje pnevmatik" }]}
+        backgroundImage="/images/services/kozamurnik-storitve-hero-2.png"
+        imageAlt="Komplet pnevmatik s križnim ključem — storitve Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
       <ServicePageContent service={service} />
     </>

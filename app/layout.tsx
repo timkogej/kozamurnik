@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Rajdhani, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
-import { SeasonalBanner } from "@/components/layout/SeasonalBanner";
+import { SeasonalToast } from "@/components/ui/SeasonalToast";
 
-const inter = Inter({
-  variable: "--font-inter",
+const rajdhani = Rajdhani({
+  variable: "--font-rajdhani",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -78,9 +78,9 @@ const jsonLd = {
   },
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: "9.6",
+    ratingValue: "4.7",
     reviewCount: "96",
-    bestRating: "10",
+    bestRating: "5",
   },
   priceRange: "$$",
   openingHoursSpecification: [
@@ -101,8 +101,8 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sl" className={`${inter.variable} ${poppins.variable} h-full scroll-smooth`}>
-      <body className="min-h-full flex flex-col bg-ink-950 text-fog-50 font-sans antialiased">
+    <html lang="sl" className={`${rajdhani.variable} ${hanken.variable} h-full scroll-smooth`}>
+      <body className="min-h-full flex flex-col bg-paper text-graphite-900 font-sans antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -113,12 +113,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Preskoči na vsebino
         </a>
-        <SeasonalBanner />
         <Navigation />
-        <main id="main-content" className="flex-1">
+        <main id="main-content" className="flex-1 bg-paper">
           {children}
         </main>
         <Footer />
+        <SeasonalToast />
       </body>
     </html>
   );

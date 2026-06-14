@@ -1,55 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  /* === SURFACES === */
-  --color-ink-950: #0b0c0e;
-  --color-ink-900: #111216;
-  --color-ink-800: #1a1c21;
-  --color-ink-700: #23262d;
-  --color-ink-600: #2e323a;
+  /* === LIGHT SURFACES (the foundation) === */
+  --color-paper: #ffffff;
+  --color-paper-50: #fdfdfd;
+  --color-paper-100: #f7f8f9;
+  --color-paper-200: #eff1f3;
+  --color-paper-300: #e3e6ea;
+
+  /* === GRAPHITE — text & rare dark accents only === */
+  --color-graphite-900: #15171b;
+  --color-graphite-700: #3a3f47;
+  --color-graphite-500: #6b7178;
+  --color-graphite-400: #9097a0;
+  --color-graphite-300: #c2c7ce;
 
   /* === BRAND RED === */
-  --color-brand-50: #fee5e7;
+  --color-brand-50: #fef2f3;
+  --color-brand-100: #fde0e3;
   --color-brand-400: #ef3a49;
   --color-brand-500: #e11d2e;
   --color-brand-600: #c41826;
-
-  /* === NEUTRALS === */
-  --color-fog-50: #ffffff;
-  --color-fog-100: #f5f6f7;
-  --color-fog-200: #e5e7eb;
-  --color-fog-300: #c8ccd2;
-  --color-fog-400: #9aa0a8;
-  --color-fog-500: #70757d;
+  --color-brand-700: #a11320;
 
   /* === SIGNAL === */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
+  --color-success: #0e9f6e;
+  --color-warning: #d97706;
 
   /* === FONTS === */
-  --font-display: var(--font-inter), system-ui, sans-serif;
-  --font-sans: var(--font-poppins), system-ui, sans-serif;
+  --font-display: var(--font-rajdhani), system-ui, sans-serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
 
-  /* === SHADOWS === */
-  --shadow-glow-red: 0 0 40px -8px rgba(225, 29, 46, 0.35);
-  --shadow-card: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
-  --shadow-card-lg: 0 20px 48px -16px rgba(0, 0, 0, 0.5);
+  /* === SHADOWS — soft and diffuse for the light theme === */
+  --shadow-soft:
+    0 2px 8px -2px rgba(21, 23, 27, 0.06), 0 4px 16px -4px rgba(21, 23, 27, 0.05);
+  --shadow-card:
+    0 4px 12px -2px rgba(21, 23, 27, 0.08), 0 8px 28px -6px rgba(21, 23, 27, 0.06);
+  --shadow-card-lg:
+    0 12px 32px -8px rgba(21, 23, 27, 0.12), 0 20px 48px -12px rgba(21, 23, 27, 0.08);
+  --shadow-brand: 0 8px 24px -6px rgba(225, 29, 46, 0.28);
 
   /* === ANIMATIONS === */
-  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
   --animate-float: float-y 6s ease-in-out infinite;
   --animate-float-delayed: float-y 6s ease-in-out 2s infinite;
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(225, 29, 46, 0);
-  }
-  50% {
-    box-shadow: 0 0 24px 6px rgba(225, 29, 46, 0.35);
-  }
+  --animate-spin-tire: spin 60s linear infinite reverse;
+  --animate-spin-orbit: spin 60s linear infinite;
+  --animate-marquee: marquee-x 40s linear infinite;
+  --animate-marquee-reverse: marquee-x-reverse 52s linear infinite;
+  --animate-hero-photo-in: hero-photo-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes float-y {
@@ -62,16 +61,49 @@
   }
 }
 
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-x-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Hero photo glides in from the side, then rests fully visible.
+   Pure CSS so the above-the-fold image never depends on JS to appear. */
+@keyframes hero-photo-in {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* === GLOBAL === */
 
 html {
+  background-color: #ffffff;
+  color-scheme: light;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #0b0c0e;
-  color: #ffffff;
-  font-family: var(--font-poppins), sans-serif;
+  background-color: #ffffff;
+  color: #15171b;
+  font-family: var(--font-hanken), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -82,17 +114,37 @@ body {
   border-radius: 4px;
 }
 
+::selection {
+  background: rgba(225, 29, 46, 0.12);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #111216;
+  background: #f7f8f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #23262d;
+  background: #c2c7ce;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e323a;
+  background: #9097a0;
+}
+
+/* Reduced motion: stop all decorative CSS animation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-float,
+  .animate-float-delayed,
+  .animate-spin-tire,
+  .animate-spin-orbit,
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-hero-photo-in {
+    animation: none;
+  }
 }

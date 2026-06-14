@@ -9,18 +9,12 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { cn } from "@/lib/cn";
 
 const temaOptions = Object.entries(temaLabels).map(([value, label]) => ({ value, label }));
 
-type ContactFormProps = {
-  variant?: "dark" | "light";
-};
-
-export function ContactForm({ variant = "dark" }: ContactFormProps) {
+export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const isLight = variant === "light";
 
   const {
     register,
@@ -57,26 +51,14 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
 
   if (status === "success") {
     return (
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center text-center p-8 rounded-2xl min-h-[400px]",
-          isLight
-            ? "bg-fog-50 border border-fog-200"
-            : "bg-ink-800 border border-ink-700"
-        )}
-      >
+      <div className="flex flex-col items-center justify-center text-center p-8 rounded-2xl min-h-[400px] bg-paper-100 border border-paper-300">
         <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-4">
           <CheckCircle className="w-8 h-8 text-success" aria-hidden />
         </div>
-        <h3
-          className={cn(
-            "font-display font-semibold text-2xl mb-2",
-            isLight ? "text-ink-900" : "text-fog-50"
-          )}
-        >
+        <h3 className="font-display font-medium text-2xl text-graphite-900 mb-2">
           Sporočilo je bilo poslano!
         </h3>
-        <p className={cn("text-sm mb-6", isLight ? "text-fog-500" : "text-fog-400")}>
+        <p className="text-sm text-graphite-500 mb-6">
           Odgovorili vam bomo v najkrajšem možnem času.
         </p>
         <button
@@ -106,7 +88,6 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
           label="Ime in priimek"
           placeholder="Janez Novak"
           required
-          variant={variant}
           error={errors.ime?.message}
           {...register("ime")}
         />
@@ -115,7 +96,6 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
           type="email"
           placeholder="janez@primer.si"
           required
-          variant={variant}
           error={errors.email?.message}
           {...register("email")}
         />
@@ -126,7 +106,6 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
           label="Telefon"
           type="tel"
           placeholder="+386 41 123 456"
-          variant={variant}
           error={errors.telefon?.message}
           {...register("telefon")}
         />
@@ -135,7 +114,6 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
           required
           options={temaOptions}
           placeholder="Izberite temo"
-          variant={variant}
           error={errors.tema?.message}
           {...register("tema")}
         />
@@ -146,7 +124,6 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
         placeholder="Opišite vaše vprašanje ali potrebo..."
         required
         rows={5}
-        variant={variant}
         error={errors.sporocilo?.message}
         {...register("sporocilo")}
       />
@@ -158,18 +135,17 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
             <span className="text-brand-500">*</span>
           </span>
         }
-        variant={variant}
         error={errors.zasebnost?.message}
         {...register("zasebnost")}
       />
 
       {status === "error" && (
         <div
-          className="flex items-start gap-3 p-4 bg-brand-500/10 border border-brand-500/30 rounded-xl"
+          className="flex items-start gap-3 p-4 bg-brand-50 border border-brand-100 rounded-xl"
           role="alert"
           aria-live="polite"
         >
-          <AlertCircle className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" aria-hidden />
+          <AlertCircle className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" aria-hidden />
           <p className="text-sm text-brand-600">{errorMsg}</p>
         </div>
       )}
@@ -177,7 +153,7 @@ export function ContactForm({ variant = "dark" }: ContactFormProps) {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-brand-500 hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors"
+        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-brand-500 hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium rounded-xl shadow-brand transition-colors"
       >
         {status === "loading" ? (
           <>

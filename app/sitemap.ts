@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/storitve/centriranje-koles",
     "/storitve/mini-servis",
     "/storitve/shranjevanje-pnevmatik",
+    "/storitve/najem-kombijev",
     "/pnevmatike",
     "/pnevmatike/letne",
     "/pnevmatike/zimske",

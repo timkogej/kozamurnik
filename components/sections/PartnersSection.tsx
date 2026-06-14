@@ -7,7 +7,7 @@ import { fadeInUp, staggerContainer, VIEWPORT_ONCE } from "@/lib/motion";
 
 export function PartnersSection() {
   return (
-    <section className="bg-ink-900 border-y border-ink-700 py-16 md:py-20">
+    <section className="bg-paper-100 border-y border-paper-300 py-16 md:py-20">
       <Container>
         <motion.div
           variants={staggerContainer}
@@ -17,10 +17,10 @@ export function PartnersSection() {
           className="space-y-8"
         >
           <motion.div variants={fadeInUp} className="text-center">
-            <h2 className="font-display font-bold text-3xl text-fog-50 mb-3">
+            <h2 className="font-display font-medium text-3xl text-graphite-900 mb-3">
               Asistenčni partnerji
             </h2>
-            <p className="text-base text-fog-300 max-w-xl mx-auto">
+            <p className="text-base text-graphite-500 max-w-xl mx-auto">
               Sodelujemo z vodilnimi zavarovalnicami. Če ste zavarovani pri njih, pokličite njihovo
               asistenco — mi pridemo.
             </p>
@@ -34,9 +34,9 @@ export function PartnersSection() {
               <motion.div
                 key={partner.slug}
                 variants={fadeInUp}
-                className="bg-ink-800 rounded-2xl border border-ink-700 p-6 flex items-center justify-center"
+                className="bg-white rounded-2xl border border-paper-300 shadow-soft p-6 flex items-center justify-center"
               >
-                <span className="font-display font-bold text-sm text-fog-300 text-center">
+                <span className="font-display font-medium text-sm text-graphite-500 text-center">
                   {partner.name}
                 </span>
               </motion.div>

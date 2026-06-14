@@ -116,6 +116,27 @@ export const services: Service[] = [
     tags: ["shranjevanje", "sezonska"],
   },
   {
+    slug: "najem-kombijev",
+    title: "Najem kombijev",
+    icon: "Bus",
+    shortDesc: "Trije kombiji za selitve, prevoze in večje nakupe — fleksibilni termini.",
+    longDesc: [
+      "Poleg storitev za vaše vozilo ponujamo tudi najem kombijev. Na voljo so trije kombiji različnih velikosti — od kompaktnega za mestne dostave do velikega tovornega prostora za selitve.",
+      "Rezervacija poteka preprosto po telefonu. Termini so fleksibilni, vozila pa redno servisirana in pripravljena na pot.",
+      "Najem je primeren za selitve, prevoz pohištva, dostavo blaga in večje nakupe, ki ne gredo v osebni avto.",
+    ],
+    included: [
+      "Trije kombiji različnih velikosti",
+      "Fleksibilni termini najema",
+      "Redno servisirana in čista vozila",
+      "Kasko zavarovanje",
+      "Preprosta rezervacija po telefonu",
+      "Svetovanje pri izbiri pravega vozila",
+    ],
+    relatedSlugs: ["menjava-pnevmatik", "mini-servis"],
+    tags: ["najem", "prevoz"],
+  },
+  {
     slug: "avtovleka",
     title: "Avtovleka 24/7",
     icon: "Truck",

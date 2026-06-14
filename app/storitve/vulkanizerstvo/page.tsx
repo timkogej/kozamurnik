@@ -18,6 +18,9 @@ export default function VulkanizerstvPage() {
         headline="Vulkanizerstvo"
         subhead="Popravilo in servis pnevmatik — hitro, zanesljivo, preverjeno."
         breadcrumbs={[{ label: "Storitve", href: "/storitve" }, { label: "Vulkanizerstvo" }]}
+        backgroundImage="/images/services/kozamurnik-storitve-hero-2.png"
+        imageAlt="Komplet pnevmatik s križnim ključem — storitve Kozamurnik"
+        imageWidthClass="lg:w-[56%]"
       />
       <ServicePageContent service={service} />
     </>

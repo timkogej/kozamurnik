@@ -10,25 +10,16 @@ import { fadeInUp, staggerContainer, VIEWPORT_ONCE } from "@/lib/motion";
 type FaqSectionProps = {
   filterTags?: FaqItem["tags"][number][];
   limit?: number;
-  variant?: "dark" | "light";
 };
 
-export function FaqSection({ filterTags, limit, variant = "light" }: FaqSectionProps) {
+export function FaqSection({ filterTags, limit }: FaqSectionProps) {
   let items = filterTags
     ? faqItems.filter((f) => f.tags.some((t) => filterTags.includes(t)))
     : faqItems;
   if (limit) items = items.slice(0, limit);
 
-  const isLight = variant === "light";
-
   return (
-    <section
-      className={
-        isLight
-          ? "bg-fog-50 border-t border-fog-200 py-20 md:py-28 lg:py-32"
-          : "bg-ink-900 py-20 md:py-28 lg:py-32"
-      }
-    >
+    <section className="bg-paper py-24 md:py-32">
       <Container>
         <motion.div
           variants={staggerContainer}
@@ -40,14 +31,10 @@ export function FaqSection({ filterTags, limit, variant = "light" }: FaqSectionP
             {/* Left */}
             <motion.div variants={fadeInUp}>
               <Eyebrow className="mb-3">Pogosta vprašanja</Eyebrow>
-              <h2
-                className={`font-display font-bold text-4xl md:text-5xl tracking-[-0.015em] leading-[1.05] mb-4 ${isLight ? "text-ink-900" : "text-fog-50"}`}
-              >
+              <h2 className="font-display font-semibold text-4xl md:text-5xl tracking-[-0.025em] leading-[1.08] text-graphite-900 mb-4">
                 Odgovori na vaša vprašanja
               </h2>
-              <p
-                className={`font-sans text-base leading-relaxed ${isLight ? "text-fog-500" : "text-fog-400"}`}
-              >
+              <p className="font-sans text-base leading-[1.65] text-graphite-500">
                 Ne najdete odgovora? Pokličite nas na{" "}
                 <a
                   href="tel:041607298"
@@ -66,7 +53,6 @@ export function FaqSection({ filterTags, limit, variant = "light" }: FaqSectionP
             {/* Right — accordion */}
             <motion.div variants={fadeInUp}>
               <Accordion
-                variant={variant}
                 items={items.map((f) => ({
                   id: f.id,
                   question: f.question,

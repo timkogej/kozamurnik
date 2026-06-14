@@ -1,29 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
-import { cn } from "@/lib/cn";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
 import { fadeInUp, staggerContainer, VIEWPORT_ONCE } from "@/lib/motion";
 
 const stats = [
   { value: 30, suffix: "+", label: "let tradicije in izkušenj" },
-  { value: 96, suffix: "+", label: "zadovoljnih strank z oceno 9.6" },
-  { value: 5, suffix: "", label: "zvezdic na Google ocenah" },
+  { value: 96, suffix: "+", label: "Google ocen" },
+  { value: 4.7, suffix: "", label: "Google ocena", display: "4,7" },
   { value: 24, suffix: "/7", label: "avtovleka po Sloveniji in EU" },
 ];
 
-function Counter({ value, suffix }: { value: number; suffix: string }) {
+function Counter({ value, suffix, display }: { value: number; suffix: string; display?: string }) {
   const [count, setCount] = useState(0);
   const [started, setStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const reduced = useReducedMotionSafe();
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setCount(value);
-      return;
-    }
+    if (reduced || display) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !started) {
@@ -47,29 +45,19 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, [value, started, prefersReducedMotion]);
+  }, [value, started, reduced, display]);
 
   return (
     <span ref={ref} className="tabular-nums">
-      {count}
+      {display ?? (reduced ? value : count)}
       {suffix}
     </span>
   );
 }
 
-type StatsSectionProps = {
-  variant?: "dark" | "light";
-};
-
-export function StatsSection({ variant = "dark" }: StatsSectionProps) {
-  const isLight = variant === "light";
+export function StatsSection() {
   return (
-    <section
-      className={cn(
-        "py-20 md:py-28 border-y",
-        isLight ? "bg-fog-50 border-fog-200" : "bg-ink-900 border-ink-700"
-      )}
-    >
+    <section className="bg-paper-100 py-24 md:py-28 border-y border-paper-300">
       <Container>
         <motion.div
           variants={staggerContainer}
@@ -79,30 +67,20 @@ export function StatsSection({ variant = "dark" }: StatsSectionProps) {
           className="space-y-12"
         >
           <motion.div variants={fadeInUp} className="max-w-2xl">
-            <h2
-              className={cn(
-                "font-display font-bold text-4xl md:text-5xl tracking-tight mb-4",
-                isLight ? "text-ink-900" : "text-fog-50"
-              )}
-            >
+            <Eyebrow className="mb-3">V številkah</Eyebrow>
+            <h2 className="font-display font-semibold text-4xl md:text-5xl tracking-[-0.025em] leading-[1.08] text-graphite-900">
               Zakaj zaupati nam?
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map(({ value, suffix, label }) => (
+            {stats.map(({ value, suffix, label, display }) => (
               <motion.div key={label} variants={fadeInUp} className="text-center lg:text-left">
-                <p className="font-display font-bold text-5xl md:text-6xl text-brand-500 mb-3">
-                  <Counter value={value} suffix={suffix} />
+                {/* The rare bold — a single stat number is allowed to pop */}
+                <p className="font-display font-bold text-5xl md:text-6xl text-graphite-900 mb-3">
+                  <Counter value={value} suffix={suffix} display={display} />
                 </p>
-                <p
-                  className={cn(
-                    "font-sans text-sm leading-relaxed",
-                    isLight ? "text-fog-500" : "text-fog-400"
-                  )}
-                >
-                  {label}
-                </p>
+                <p className="font-sans text-sm leading-[1.6] text-graphite-500">{label}</p>
               </motion.div>
             ))}
           </div>
