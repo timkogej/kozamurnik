@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { TireSvg } from "./TireSvg";
 import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
 import { cn } from "@/lib/cn";
 import heroTireImage from "@/public/images/hero/kozamurnik-tire-hero-3.png";
@@ -26,30 +24,20 @@ export function ScrollRotateTire({
   imageAlt = "Pnevmatika",
 }: ScrollRotateTireProps) {
   const reduced = useReducedMotionSafe();
-  const [imageFailed, setImageFailed] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const { scrollY } = useScroll();
   // Negative target so the scroll-driven rotation matches the
   // counter-clockwise continuous spin of the tire
   const scrollRotate = useTransform(scrollY, [0, 1200], [0, -120]);
 
-  // The SVG placeholder stays visible until a real tire image loads,
-  // so there is never a blank centerpiece while the PNG is missing.
   const visual = (
-    <>
-      {!imageLoaded && <TireSvg className="absolute inset-0 w-full h-full" />}
-      {!imageFailed && (
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          fill
-          sizes="(max-width: 1024px) 70vw, 40vw"
-          className={imageLoaded ? "object-contain" : "object-contain opacity-0"}
-          onError={() => setImageFailed(true)}
-          onLoad={() => setImageLoaded(true)}
-        />
-      )}
-    </>
+    <Image
+      src={imageSrc}
+      alt={imageAlt}
+      fill
+      priority
+      sizes="(max-width: 1024px) 70vw, 40vw"
+      className="object-contain"
+    />
   );
 
   if (reduced) {
