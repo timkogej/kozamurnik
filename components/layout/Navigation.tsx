@@ -231,8 +231,6 @@ export function Navigation() {
           <div className="flex items-center gap-2">
             <a
               href={siteConfig.externalLinks.booking}
-              target="_blank"
-              rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-xl shadow-brand transition-colors"
             >
               <Calendar className="w-4 h-4 shrink-0" aria-hidden />

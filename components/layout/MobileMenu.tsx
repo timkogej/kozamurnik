@@ -254,8 +254,6 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
           <div className="p-4 border-t border-paper-300">
             <a
               href={siteConfig.externalLinks.booking}
-              target="_blank"
-              rel="noopener noreferrer"
               onClick={onClose}
               className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-xl shadow-brand transition-colors"
             >

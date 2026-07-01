@@ -163,8 +163,6 @@ export function HomeHero() {
             >
               <a
                 href={siteConfig.externalLinks.booking}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-xl shadow-brand transition-all active:scale-[0.98] group xl:px-6"
               >
                 <Calendar className="w-4 h-4 shrink-0" aria-hidden />

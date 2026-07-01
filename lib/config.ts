@@ -35,7 +35,7 @@ export const siteConfig = {
     shop: "http://gume.kozamurnik.si/",
     configurator:
       "https://boris-kozamurnik-vulkanizerstvo.reifen-felgen-konfigurator.de/gb/complete",
-    booking: "https://booking.jedroplus.com/jedroplus-d-o-o/elegant",
+    booking: "/rezervacija",
     maps:
       "https://www.google.com/maps/search/?api=1&query=Bukovska+vas+15,+2373+%C5%A0entjan%C5%BE",
   },

@@ -64,8 +64,6 @@ export function SeasonalToast() {
                 </p>
                 <a
                   href={siteConfig.externalLinks.booking}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   onClick={() => setVisible(false)}
                   className="group inline-flex items-center gap-1.5 mt-2.5 text-sm font-medium text-brand-500 hover:text-brand-600 transition-colors"
                 >
