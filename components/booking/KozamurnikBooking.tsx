@@ -1,12 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { addDays, format, isSameDay, isToday, startOfDay } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
 import { sl } from "date-fns/locale";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
   CalendarDays,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -61,6 +74,7 @@ const bookingShellClass =
   "mx-auto w-full max-w-6xl px-4 pt-28 pb-10 sm:px-6 sm:pt-32 lg:px-8 lg:pt-36 lg:pb-14";
 
 const weekdayLabels = ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"];
+const calendarWeekdayLabels = ["Pon", "Tor", "Sre", "Čet", "Pet", "Sob", "Ned"];
 
 type FormErrors = Partial<Record<"firstName" | "lastName" | "email" | "phone" | "privacy", string>>;
 
@@ -104,16 +118,8 @@ function getDayStatus(daySlots: DaySlots | undefined) {
   return "unavailable";
 }
 
-function isStorageService(service: Pick<Service, "id">) {
-  return Boolean(bookingConfig.storage.serviceId && String(service.id) === bookingConfig.storage.serviceId);
-}
-
-function getVisibleServices(services: Service[]) {
-  return services.filter((service) => !isStorageService(service));
-}
-
-function getBookingServiceIds(services: Service[], storageEnabled: boolean) {
-  const ids = services[0] ? [String(services[0].id)] : [];
+function getBookingServiceIds(_services: Service[], storageEnabled: boolean) {
+  const ids = [bookingConfig.primaryServiceId];
 
   if (storageEnabled && bookingConfig.storage.serviceId) {
     ids.push(bookingConfig.storage.serviceId);
@@ -125,6 +131,21 @@ function getBookingServiceIds(services: Service[], storageEnabled: boolean) {
 function getStorageService(services: Service[]) {
   if (!bookingConfig.storage.serviceId) return undefined;
   return services.find((service) => String(service.id) === bookingConfig.storage.serviceId);
+}
+
+function getPrimaryBookingService(services: Service[]): Service {
+  const service = services.find((item) => String(item.id) === bookingConfig.primaryServiceId);
+
+  if (service) return service;
+
+  return {
+    id: bookingConfig.primaryServiceId,
+    category_id: "",
+    naziv: "Menjava pnevmatik",
+    opis: "",
+    trajanjeMin: 0,
+    cena: 0,
+  };
 }
 
 function getBookingDuration(services: Service[], storageEnabled: boolean, availableServices: Service[]) {
@@ -218,12 +239,21 @@ function StepIndicator() {
   const currentStep = useBookingStore((state) => state.currentStep);
   const selectedTime = useBookingStore((state) => state.selectedTime);
 
-  const visualStep = currentStep === 3 && selectedTime ? 4 : currentStep >= 4 ? currentStep + 1 : currentStep;
-  const steps = ["Storitev", "Vozilo", "Datum", "Ura", "Podatki", "Potrditev"];
+  const visualStep =
+    currentStep <= 1
+      ? selectedTime
+        ? 2
+        : 1
+      : currentStep === 2
+        ? 3
+        : currentStep === 3
+          ? 4
+          : 5;
+  const steps = ["Datum", "Ura", "Vozilo", "Podatki", "Potrditev"];
 
   return (
     <div className="rounded-2xl border border-paper-300 bg-white p-3 shadow-soft" aria-label="Napredek rezervacije">
-      <div className="grid grid-cols-6 gap-1">
+      <div className="grid grid-cols-5 gap-1">
         {steps.map((label, index) => {
           const number = index + 1;
           const active = visualStep === number;
@@ -276,157 +306,6 @@ function QuantitySelector() {
         })}
       </div>
     </div>
-  );
-}
-
-function ServiceStep({ currency }: { currency: string }) {
-  const categories = useBookingStore((state) => state.categories);
-  const servicesByCategory = useBookingStore((state) => state.servicesByCategory);
-  const selectedServices = useBookingStore((state) => state.selectedServices);
-  const addService = useBookingStore((state) => state.addService);
-  const goToStep = useBookingStore((state) => state.goToStep);
-  const storageSelection = useBookingStore((state) => state.storageSelection);
-  const toggleStorage = useBookingStore((state) => state.toggleStorage);
-  const { serviceDiscounts, resetSelections } = usePromotionsStore();
-
-  const selectedIds = useMemo(() => new Set(selectedServices.map((service) => service.id)), [selectedServices]);
-  const canContinue = selectedServices.length > 0;
-
-  const toggleService = (service: Service) => {
-    resetSelections();
-    if (selectedIds.has(service.id)) return;
-    addService(service);
-  };
-
-  return (
-    <section className="space-y-8">
-      <div>
-        <p className="mb-3 text-sm font-semibold uppercase tracking-normal text-brand-600">Izberi storitev</p>
-        <h1 className="font-display text-4xl font-semibold leading-tight text-graphite-900 sm:text-5xl">
-          Rezervacija termina
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-graphite-500">
-          Izberite storitev, ki jo potrebujete. Sistem pokaže samo proste termine za izbrani obseg dela.
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        {categories.map((category) => {
-          const services = getVisibleServices(servicesByCategory[category.id] ?? []);
-          if (!services.length) return null;
-
-          return (
-            <div key={category.id} className="space-y-3">
-              <h2 className="text-sm font-semibold uppercase tracking-normal text-graphite-500">{category.name}</h2>
-              <div className="grid gap-3">
-                {services.map((service) => {
-                  const selected = selectedIds.has(service.id);
-                  const promotion = serviceDiscounts[String(service.id)];
-
-                  return (
-                    <button
-                      key={service.id}
-                      type="button"
-                      onClick={() => toggleService(service)}
-                      className={cn(
-                        "group rounded-2xl border bg-white p-5 text-left shadow-soft transition-all",
-                        "hover:-translate-y-0.5 hover:border-brand-500/50 hover:shadow-card",
-                        selected ? "border-brand-500 ring-2 ring-brand-500/15" : "border-paper-300"
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-5">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-3">
-                            <span
-                              className={cn(
-                                "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
-                                selected
-                                  ? "border-brand-500 bg-brand-500 text-white"
-                                  : "border-paper-300 text-transparent"
-                              )}
-                              aria-hidden
-                            >
-                              <Check className="h-3.5 w-3.5" />
-                            </span>
-                            <h3 className="text-lg font-semibold text-graphite-900">{service.naziv}</h3>
-                          </div>
-                          {service.opis && (
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-graphite-500">{service.opis}</p>
-                          )}
-                          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-graphite-500">
-                            <span className="inline-flex items-center gap-1.5">
-                              <Clock className="h-4 w-4" aria-hidden />
-                              {formatDuration(service.trajanjeMin)}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          {promotion ? (
-                            <div>
-                              <p className="text-xs text-graphite-400 line-through">
-                                {formatMoney(promotion.originalCena, currency)}
-                              </p>
-                              <p className="text-lg font-bold text-brand-600">
-                                {formatMoney(promotion.finalCena, currency)}
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-lg font-bold text-graphite-900">
-                              {formatMoney(Number(service.cena), currency)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {bookingConfig.storage.enabled && (
-        <div className="rounded-2xl border border-paper-300 bg-paper-50 p-5">
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              checked={storageSelection.enabled}
-              onChange={(event) => toggleStorage(event.target.checked)}
-              className="mt-1 h-5 w-5 rounded border-paper-300 text-brand-500 focus:ring-brand-500"
-            />
-            <span>
-              <span className="block text-base font-semibold text-graphite-900">
-                Želim tudi shranjevanje pnevmatik (sezonsko)
-              </span>
-              <span className="mt-1 block text-sm text-graphite-500">
-                {formatMoney(bookingConfig.storage.unitPrice, currency)} na komplet. Količino lahko prilagodite spodaj.
-              </span>
-            </span>
-          </label>
-          <AnimatePresence>
-            {storageSelection.enabled && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-              >
-                <QuantitySelector />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-graphite-500">
-          Izberite eno storitev za nadaljevanje.
-        </p>
-        <Button type="button" onClick={() => goToStep(2)} disabled={!canContinue}>
-          Nadaljuj
-        </Button>
-      </div>
-    </section>
   );
 }
 
@@ -632,6 +511,77 @@ function StorageUpsell({ currency }: { currency: string }) {
   );
 }
 
+function TimeSlotsPanel({
+  selectedDate,
+  timeSlots,
+  selectedTime,
+  isLoading,
+  onTimeSelect,
+  className,
+}: {
+  selectedDate: Date | null;
+  timeSlots: string[];
+  selectedTime: string | null;
+  isLoading: boolean;
+  onTimeSelect: (time: string) => void;
+  className?: string;
+}) {
+  return (
+    <div className={cn("rounded-2xl border border-paper-300 bg-white p-5 shadow-soft", className)}>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-graphite-900">Prosti termini</p>
+          <p className="text-sm text-graphite-500">
+            {selectedDate
+              ? format(selectedDate, "EEEE, d. MMMM yyyy", { locale: sl })
+              : "Izberite datum v koledarju"}
+          </p>
+        </div>
+        <CalendarDays className="h-5 w-5 text-brand-500" aria-hidden />
+      </div>
+
+      {isLoading ? (
+        <div className="grid gap-2">
+          {Array.from({ length: 6 }, (_, index) => (
+            <div key={index} className="h-11 animate-pulse rounded-xl bg-paper-200" />
+          ))}
+        </div>
+      ) : !selectedDate ? (
+        <div className="rounded-xl bg-paper-100 px-4 py-8 text-center text-sm text-graphite-500">
+          Izberite datum v koledarju.
+        </div>
+      ) : timeSlots.length === 0 ? (
+        <div className="rounded-xl bg-paper-100 px-4 py-8 text-center text-sm text-graphite-500">
+          Ni prostih terminov - izberite drug dan.
+        </div>
+      ) : (
+        <div className="grid gap-2">
+          {timeSlots.map((slot) => {
+            const selected = selectedTime === slot;
+            return (
+              <button
+                key={slot}
+                type="button"
+                onClick={() => onTimeSelect(slot)}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all",
+                  selected
+                    ? "border-brand-500 bg-brand-500 text-white shadow-brand"
+                    : "border-paper-300 bg-white text-graphite-700 hover:border-brand-500/50 hover:bg-brand-50"
+                )}
+                aria-pressed={selected}
+              >
+                <span>{slot}</span>
+                <Clock className={cn("h-4 w-4", selected ? "text-white/80" : "text-graphite-400")} aria-hidden />
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DateTimeStep({ currency }: { currency: string }) {
   const company = useBookingStore((state) => state.company);
   const selectedDate = useBookingStore((state) => state.selectedDate);
@@ -660,10 +610,25 @@ function DateTimeStep({ currency }: { currency: string }) {
   } = usePromotionsStore();
 
   const today = useMemo(() => startOfDay(new Date()), []);
+  const [currentMonth, setCurrentMonth] = useState(today);
+  const windowEnd = useMemo(() => addDays(today, maxDniRezervacija), [maxDniRezervacija, today]);
   const days = useMemo(
     () => Array.from({ length: maxDniRezervacija + 1 }, (_, index) => addDays(today, index)),
     [maxDniRezervacija, today]
   );
+  const calendarDays = useMemo(
+    () =>
+      eachDayOfInterval({
+        start: startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 }),
+        end: endOfWeek(endOfMonth(currentMonth), { weekStartsOn: 1 }),
+      }),
+    [currentMonth]
+  );
+  const currentMonthLabel = format(currentMonth, "MMMM yyyy", { locale: sl });
+  const canShowPreviousMonth =
+    startOfMonth(currentMonth).getTime() > startOfMonth(today).getTime();
+  const canShowNextMonth =
+    startOfMonth(addMonths(currentMonth, 1)).getTime() <= startOfMonth(windowEnd).getTime();
 
   const serviceIds = useMemo(() => {
     return getBookingServiceIds(services, storageSelection.enabled);
@@ -689,7 +654,7 @@ function DateTimeStep({ currency }: { currency: string }) {
         anyPerson: false,
         eligibleEmployeeIds: [],
         startDate: format(today, "yyyy-MM-dd"),
-        endDate: format(addDays(today, maxDniRezervacija), "yyyy-MM-dd"),
+        endDate: format(windowEnd, "yyyy-MM-dd"),
         resursiIds: bookingResursiIds.length > 0 ? bookingResursiIds : undefined,
       });
       setSlotsMap(response.slots);
@@ -698,7 +663,7 @@ function DateTimeStep({ currency }: { currency: string }) {
     } finally {
       setLoadingSlots(false);
     }
-  }, [bookingResursiIds, maxDniRezervacija, serviceIds, setLoadingSlots, setSlotsMap, today]);
+  }, [bookingResursiIds, serviceIds, setLoadingSlots, setSlotsMap, today, windowEnd]);
 
   useEffect(() => {
     void fetchSlots();
@@ -709,7 +674,15 @@ function DateTimeStep({ currency }: { currency: string }) {
   const timeSlots = Array.isArray(selectedDaySlots) ? selectedDaySlots : [];
   const canContinue =
     Boolean(selectedDate && selectedTime) &&
+    !isLoadingSlots &&
     (storageSelection.enabled || !storageSelection.upsellShown || storageSelection.upsellAnswered);
+
+  useEffect(() => {
+    if (!selectedDate || !selectedTime || isLoadingSlots) return;
+    if (!Array.isArray(selectedDaySlots) || !selectedDaySlots.includes(selectedTime)) {
+      selectTime("");
+    }
+  }, [isLoadingSlots, selectTime, selectedDate, selectedDaySlots, selectedTime]);
 
   const handleTimeSelect = async (time: string) => {
     selectTime(time);
@@ -766,21 +739,21 @@ function DateTimeStep({ currency }: { currency: string }) {
   };
 
   return (
-    <section className="space-y-8">
+    <section className="w-full max-w-full min-w-0 space-y-8 overflow-x-hidden">
       <div>
         <p className="mb-3 text-sm font-semibold uppercase tracking-normal text-brand-600">Izberi datum in uro</p>
         <h2 className="font-display text-4xl font-semibold leading-tight text-graphite-900">
-          Prosti termini
+          Rezervacija termina
         </h2>
         <p className="mt-3 max-w-2xl text-base text-graphite-500">
-          Datumi so v eni vodoravni vrstici. Po izbiri dneva se prosti termini prikažejo spodaj.
+          Izberite dan in uro. Shranjevanje pnevmatik lahko dodate po izbiri termina.
         </p>
       </div>
 
-      <div className="relative">
+      <div className="relative w-full max-w-full min-w-0 overflow-hidden md:hidden">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent" />
-        <div className="flex snap-x gap-3 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex w-full max-w-full min-w-0 snap-x gap-3 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {isLoadingSlots
             ? Array.from({ length: 10 }, (_, index) => (
                 <div key={index} className="h-24 w-[76px] shrink-0 animate-pulse rounded-2xl bg-paper-200" />
@@ -808,54 +781,143 @@ function DateTimeStep({ currency }: { currency: string }) {
       <AnimatePresence mode="wait">
         {selectedDate && (
           <motion.div
-            key={selectedDateKey}
+            key={`mobile-${selectedDateKey}`}
             initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            className="rounded-2xl border border-paper-300 bg-white p-5 shadow-soft"
+            className="md:hidden"
           >
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-graphite-900">
-                  {format(selectedDate, "EEEE, d. MMMM yyyy", { locale: sl })}
-                </p>
-                <p className="text-sm text-graphite-500">
-                  {timeSlots.length > 0 ? `${timeSlots.length} prostih terminov` : "Ni prostih terminov"}
-                </p>
-              </div>
-              <CalendarDays className="h-5 w-5 text-brand-500" aria-hidden />
-            </div>
-
-            {timeSlots.length === 0 ? (
-              <div className="rounded-xl bg-paper-100 px-4 py-8 text-center text-sm text-graphite-500">
-                Ni prostih terminov - izberite drug dan.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                {timeSlots.map((slot) => {
-                  const selected = selectedTime === slot;
-                  return (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => void handleTimeSelect(slot)}
-                      className={cn(
-                        "rounded-full border px-4 py-3 text-sm font-semibold transition-all",
-                        selected
-                          ? "border-brand-500 bg-brand-500 text-white shadow-brand"
-                          : "border-paper-300 bg-white text-graphite-700 hover:border-brand-500/50 hover:bg-brand-50"
-                      )}
-                      aria-pressed={selected}
-                    >
-                      {slot}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+            <TimeSlotsPanel
+              selectedDate={selectedDate}
+              timeSlots={timeSlots}
+              selectedTime={selectedTime}
+              isLoading={isLoadingSlots}
+              onTimeSelect={(slot) => void handleTimeSelect(slot)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="hidden gap-6 md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(260px,0.95fr)]">
+        <div className="rounded-2xl border border-paper-300 bg-white p-5 shadow-soft">
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h3 className="text-base font-semibold capitalize text-graphite-900">{currentMonthLabel}</h3>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentMonth((month) => subMonths(month, 1))}
+                disabled={!canShowPreviousMonth}
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-xl border border-paper-300 bg-white text-graphite-600 transition-colors",
+                  "hover:border-brand-500/40 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-paper-300 disabled:hover:bg-white"
+                )}
+                aria-label="Prejšnji mesec"
+              >
+                <ChevronLeft className="h-4 w-4" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentMonth((month) => addMonths(month, 1))}
+                disabled={!canShowNextMonth}
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-xl border border-paper-300 bg-white text-graphite-600 transition-colors",
+                  "hover:border-brand-500/40 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-paper-300 disabled:hover:bg-white"
+                )}
+                aria-label="Naslednji mesec"
+              >
+                <ChevronRight className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-7 gap-x-1 gap-y-2">
+            {calendarWeekdayLabels.map((label) => (
+              <div key={label} className="flex h-8 items-center justify-center text-xs font-semibold uppercase text-graphite-400">
+                {label}
+              </div>
+            ))}
+            {isLoadingSlots
+              ? Array.from({ length: 35 }, (_, index) => (
+                  <div key={index} className="flex h-10 items-center justify-center">
+                    <div className="h-8 w-8 animate-pulse rounded-full bg-paper-200" />
+                  </div>
+                ))
+              : calendarDays.map((day) => {
+                  const key = format(day, "yyyy-MM-dd");
+                  const status = getDayStatus(slotsMap[key]);
+                  const disabled = status !== "available";
+                  const selected = selectedDate ? isSameDay(day, selectedDate) : false;
+                  const inCurrentMonth = isSameMonth(day, currentMonth);
+                  const todayDate = isToday(day);
+
+                  return (
+                    <div key={key} className="flex h-10 items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!inCurrentMonth) setCurrentMonth(startOfMonth(day));
+                          selectDate(day);
+                        }}
+                        disabled={disabled}
+                        className={cn(
+                          "relative flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all",
+                          selected
+                            ? "bg-brand-500 text-white shadow-brand"
+                            : "text-graphite-900 hover:bg-brand-50 hover:text-brand-700",
+                          !inCurrentMonth && !selected && "text-graphite-300",
+                          status === "fully_booked" &&
+                            !selected &&
+                            "cursor-not-allowed bg-paper-200 text-graphite-400 hover:bg-paper-200 hover:text-graphite-400",
+                          status === "unavailable" &&
+                            !selected &&
+                            "cursor-not-allowed bg-paper-100 text-graphite-300 hover:bg-paper-100 hover:text-graphite-300"
+                        )}
+                        aria-pressed={selected}
+                        aria-label={`${format(day, "EEEE, d. MMMM yyyy", { locale: sl })}, ${
+                          disabled ? "ni prostih terminov" : "prosti termini"
+                        }`}
+                      >
+                        {todayDate && (
+                          <span
+                            className={cn(
+                              "absolute top-1 h-1.5 w-1.5 rounded-full",
+                              selected ? "bg-white" : disabled ? "bg-graphite-300" : "bg-brand-500"
+                            )}
+                            aria-hidden
+                          />
+                        )}
+                        <span>{format(day, "d")}</span>
+                      </button>
+                    </div>
+                  );
+                })}
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-graphite-500">
+            <span className="inline-flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-white ring-1 ring-paper-300" aria-hidden />
+              Prosto
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-paper-200 ring-1 ring-paper-300" aria-hidden />
+              Zasedeno
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-brand-500" aria-hidden />
+              Izbrano
+            </span>
+          </div>
+        </div>
+
+        <TimeSlotsPanel
+          selectedDate={selectedDate}
+          timeSlots={timeSlots}
+          selectedTime={selectedTime}
+          isLoading={isLoadingSlots}
+          onTimeSelect={(slot) => void handleTimeSelect(slot)}
+          className="h-fit"
+        />
+      </div>
 
       <AnimatePresence>
         <StorageUpsell currency={currency} />
@@ -876,11 +938,8 @@ function DateTimeStep({ currency }: { currency: string }) {
         </div>
       )}
 
-      <div className="flex justify-between gap-3">
-        <Button type="button" variant="secondary" onClick={() => goToStep(2)}>
-          Nazaj
-        </Button>
-        <Button type="button" onClick={() => goToStep(4)} disabled={!canContinue}>
+      <div className="flex justify-start gap-3 sm:justify-end">
+        <Button type="button" onClick={() => goToStep(2)} disabled={!canContinue}>
           Nadaljuj
         </Button>
       </div>
@@ -928,7 +987,7 @@ function CustomerStep() {
       gdprSendMarketing,
     };
     setCustomerDetails(details);
-    goToStep(5);
+    goToStep(4);
   };
 
   return (
@@ -1043,7 +1102,7 @@ function CustomerStep() {
       </div>
 
       <div className="flex justify-between gap-3">
-        <Button type="button" variant="secondary" onClick={() => goToStep(3)}>
+        <Button type="button" variant="secondary" onClick={() => goToStep(2)}>
           Nazaj
         </Button>
         <Button type="button" onClick={handleContinue}>
@@ -1103,7 +1162,7 @@ function ConfirmationStep({ currency }: { currency: string }) {
     if (code === "slot_taken" || code === "resurs_taken" || code === "no_employee_available") {
       setError("Termin ni več na voljo. Izberite drug datum ali uro.");
       selectTime("");
-      goToStep(3);
+      goToStep(1);
       return true;
     }
     return false;
@@ -1301,7 +1360,7 @@ function ConfirmationStep({ currency }: { currency: string }) {
       )}
 
       <div className="flex justify-between gap-3">
-        <Button type="button" variant="secondary" onClick={() => goToStep(4)} disabled={isSubmitting}>
+        <Button type="button" variant="secondary" onClick={() => goToStep(3)} disabled={isSubmitting}>
           Nazaj
         </Button>
         <Button type="button" onClick={() => void handleConfirm()} loading={isSubmitting}>
@@ -1462,6 +1521,9 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
   const company = useBookingStore((state) => state.company);
   const setInitData = useBookingStore((state) => state.setInitData);
   const setLoading = useBookingStore((state) => state.setLoading);
+  const addService = useBookingStore((state) => state.addService);
+  const goToStep = useBookingStore((state) => state.goToStep);
+  const resetBooking = useBookingStore((state) => state.reset);
   const isLoading = useBookingStore((state) => state.isLoading);
   const bookingConfirmation = useBookingStore((state) => state.bookingConfirmation);
   const reducedMotion = useReducedMotionSafe();
@@ -1469,11 +1531,15 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
   const currency = currencySymbol(company?.valuta);
 
   const loadInit = useCallback(async () => {
+    resetBooking();
     setLoading(true);
     setLoadError("");
+    usePromotionsStore.getState().resetSelections();
     try {
       const data = await fetchInitData(bookingConfig.companySlug);
       setInitData(data);
+      addService(getPrimaryBookingService(data.services ?? []));
+      goToStep(1);
 
       const companyId = data.company?.idPodjetja;
       const serviceIds = (data.services ?? []).map((service) => String(service.id));
@@ -1502,7 +1568,7 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
     } finally {
       setLoading(false);
     }
-  }, [setInitData, setLoading]);
+  }, [addService, goToStep, resetBooking, setInitData, setLoading]);
 
   useEffect(() => {
     if (paymentReturn) return;
@@ -1515,11 +1581,10 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
   }, [loadInit, paymentReturn]);
 
   const liveLabels: Record<number, string> = {
-      1: "Izberi storitev",
+      1: "Izberi datum in uro",
       2: "Podatki o vozilu",
-      3: "Izberi datum in uro",
-      4: "Tvoji podatki",
-      5: "Povzetek in potrditev",
+      3: "Tvoji podatki",
+      4: "Povzetek in potrditev",
   };
   const liveMessage = liveLabels[currentStep] ?? "";
 
@@ -1562,7 +1627,7 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="min-w-0 rounded-2xl border border-paper-300 bg-white p-5 shadow-card sm:p-8 lg:p-10">
+          <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-paper-300 bg-white p-5 shadow-card sm:p-8 lg:p-10">
             <span className="sr-only" aria-live="polite">
               {liveMessage}
             </span>
@@ -1570,7 +1635,7 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
               <motion.div
                 key={bookingConfirmation?.success ? "success" : currentStep}
                 variants={stepVariants}
-                initial={reducedMotion ? { opacity: 0 } : "initial"}
+                initial={false}
                 animate="animate"
                 exit={reducedMotion ? { opacity: 0 } : "exit"}
                 transition={{ duration: reducedMotion ? 0.01 : 0.24, ease: "easeOut" }}
@@ -1578,13 +1643,13 @@ export function KozamurnikBooking({ paymentReturn }: { paymentReturn?: PaymentRe
                 {bookingConfirmation?.success ? (
                   <SuccessView currency={currency} />
                 ) : currentStep === 1 ? (
-                  <ServiceStep currency={currency} />
+                  <DateTimeStep currency={currency} />
                 ) : currentStep === 2 ? (
                   <VehicleStep />
                 ) : currentStep === 3 ? (
-                  <DateTimeStep currency={currency} />
-                ) : currentStep === 4 ? (
                   <CustomerStep />
+                ) : currentStep === 4 ? (
+                  <ConfirmationStep currency={currency} />
                 ) : (
                   <ConfirmationStep currency={currency} />
                 )}

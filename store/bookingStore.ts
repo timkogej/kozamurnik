@@ -30,7 +30,7 @@ function getPersistedLanguage(): SupportedLanguage {
 // ─────────────────────────────────────────────────────────────────────────────
 interface BookingState {
   // ── Step ────────────────────────────────────────────────────────────────────
-  /** Current booking step. 1–6 = standard flow, 7 = Stripe payment gate */
+  /** Current booking step. Main flow: 1 date/time, 2 vehicle, 3 customer, 4 confirmation, 7 Stripe payment gate */
   currentStep: BookingStep;
 
   // ── Theme ────────────────────────────────────────────────────────────────────
@@ -431,10 +431,7 @@ export const useBookingStore = create<BookingState>((set, get) => {
       const { currentStep } = get();
       if (currentStep === 7) {
         // Payment step: go back to confirmation
-        set({ currentStep: 6 as BookingStep });
-      } else if (currentStep === 3) {
-        // Step 3 can be reached by skipping step 2 via selectCategoryAndService
-        set({ currentStep: 1 as BookingStep });
+        set({ currentStep: 4 as BookingStep });
       } else if (currentStep > 1) {
         set({ currentStep: (currentStep - 1) as BookingStep });
       }

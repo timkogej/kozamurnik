@@ -7,6 +7,7 @@ export const bookingConfig = {
 
   fixedEmployeeId: 21,
   showPersonSelection: false,
+  primaryServiceId: "42",
 
   tireSizes: ['13"', '14"', '15"', '16"', '17"', '18"', '19"', '20"', '21"', '22"'],
   vehicleTypes: [

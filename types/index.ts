@@ -103,14 +103,13 @@ export interface BookingData {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BookingStep — includes step 7 for Stripe payment gate
-//   1 = CategorySelection
-//   2 = ServiceSelection
-//   3 = EmployeeSelection
-//   4 = DateTimeSelection
-//   5 = CustomerDetails
-//   6 = Confirmation (review + submit)
-//   7 = Payment (Stripe — only shown when company.stripe_enabled=true)
+// BookingStep — includes step 7 for Stripe payment gate.
+// The main Kozamurnik flow uses:
+//   1 = DateTimeSelection
+//   2 = VehicleDetails
+//   3 = CustomerDetails
+//   4 = Confirmation (review + submit)
+// Variant components may still use the legacy 5/6 layout.
 // ─────────────────────────────────────────────────────────────────────────────
 export type BookingStep = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
